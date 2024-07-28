@@ -16,6 +16,9 @@ static LIS3MDL magnetometer(&devI2c, 0x3C);
 static DigitalOut shutdown_pin(PC_6);
 static VL53L0X range(&devI2c, &shutdown_pin, PC_7, 0x52);
 
+static UnbufferedSerial sp(USBTX, USBRX); // added to add tx and rx on serial port
+
+
 
 // functions to print sensor data
 void print_t_rh(){
@@ -58,6 +61,15 @@ void print_distance(){
     }
 }
 
+char key;
+volatile char keyB = 0;
+
+void PCinterrupt(){
+    if(sp.readable()){
+        sp.read(&key, 1);
+        keyB = 1;
+    }}
+
 /* Simple main function */
 int main() {
     uint8_t id;
@@ -79,10 +91,10 @@ int main() {
     acc_gyro.enable_x();
     acc_gyro.enable_g();
   
-    printf("\033[2J\033[20A");
+    //printf("\033[2J\033[20A");
     printf ("\r\n--- Starting new run ---\r\n\r\n");
 
-    hum_temp.read_id(&id);
+  /*  hum_temp.read_id(&id);
     printf("HTS221  humidity & temperature    = 0x%X\r\n", id);
 
     press_temp.read_id(&id);
@@ -91,16 +103,44 @@ int main() {
     printf("LIS3MDL magnetometer              = 0x%X\r\n", id);
     acc_gyro.read_id(&id);
     printf("LSM6DSL accelerometer & gyroscope = 0x%X\r\n", id);
-    
-    printf("\n\r--- Reading sensor values ---\n\r"); ;
+    */
+   /* printf("\n\r--- Reading sensor values ---\n\r"); ;
     print_t_rh();
     print_mag();
     print_accel();
     print_gyro();
     print_distance();
-    printf("\r\n");
+    printf("\r\n"); */
     
-    while(1) {
-        wait_us(500000);
+
+sp.attach(&PCinterrupt);
+
+    while (1) {
+        if(keyB){
+            switch (key) {
+                case 'a': // If button a is pressed on the keyboard the the function print_accel is activated and acceleration will be printed on the console
+                    print_accel();
+                    break;
+                case 'g': // If button g is pressed on the keyboard the the function print_gyro is activated and gyroscopre details will be shown
+                    print_gyro();
+                    break;
+                case 'd': // If button d is pressed on the keyboard the the function print_distanme is activated and distance sensor value will be shown
+                    print_distance();
+                    break; 
+                    case 't': // If button t is pressed on the keyboard the the function print_t_rh is activated and temp/pressure data will be shown
+                      print_t_rh();
+                      break;
+                      case 'm': // If button m is pressed on the keyboard the the function print_mag is activated
+                       print_mag();    
+                       break;
+
+            }
+            keyB = 0;
+        }
+
+
+
+
+    
     }
 }
