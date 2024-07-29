@@ -92,8 +92,12 @@ int main() {
     acc_gyro.enable_g();
   
     //printf("\033[2J\033[20A");
-    printf ("\r\n--- Starting new run ---\r\n\r\n");
-
+    printf ("\r\n--- Sensor terminal active ---\r\n\r\n");
+printf ("\r\n--- Press a for Accel Data ---\r\n\r\n");
+printf ("\r\n--- Press g for Gyro Data ---\r\n\r\n");
+printf ("\r\n--- Press d for Distance Data ---\r\n\r\n");
+printf ("\r\n--- Press t for Temp and pressure Data ---\r\n\r\n");
+printf ("\r\n--- Press m for Magnetometer Data ---\r\n\r\n");
   /*  hum_temp.read_id(&id);
     printf("HTS221  humidity & temperature    = 0x%X\r\n", id);
 
